@@ -31,7 +31,7 @@ class Pixel(BaseModel):
     r: int = 0
     g: int = 0
     b: int = 0
-    a: int | None = 0
+    a: int = 0
 
     def __init__(self, r=128, g=0, b=0, a=255, **kwargs):
         super().__init__(**kwargs)
