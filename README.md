@@ -27,4 +27,5 @@ During development:
 - Run `poetry run uvicorn matelight_pixel.main:app --reload` to start the development version of the server.
 - Run `source .venv/bin/activate` then `uvicorn matelight_pixel.main:app --reload` if you are using pip.        
 - Go to http://127.0.0.1:8000 to see the site.
+- Go to http://localhost:8000/docs to play with the API
 

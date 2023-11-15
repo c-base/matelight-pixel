@@ -3,11 +3,11 @@ import traceback
 import sys
 import json
 from contextlib import asynccontextmanager
-from starlette.config import Config
+# sfrom starlette.config import Config
 from fastapi import Depends, FastAPI, Request, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import BackgroundTasks
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from starlette.middleware.sessions import SessionMiddleware
 # from fastapi.security import OAuth2AuthorizationCodeBearer
@@ -27,9 +27,14 @@ settings = Settings()
 templates = Jinja2Templates(directory="templates")
 
 
-class Pixel(object):
+class Pixel(BaseModel):
+    r: int = 0
+    g: int = 0
+    b: int = 0
+    a: int | None = 0
 
-    def __init__(self, r=128, g=0, b=0, a=255):
+    def __init__(self, r=128, g=0, b=0, a=255, **kwargs):
+        super().__init__(**kwargs)
         self.r = r
         self.g = g
         self.b = b
@@ -75,9 +80,11 @@ class MateLightRunner:
         while self.started is True:
             await asyncio.sleep(0.1)
             await self.matelight_loop()
-                    
+
     async def stop(self):
         self.started = False
+        message = matelight.blank_screen()
+        matelight.send_array(message, settings.matelight_host, settings.matelight_port)
 
 
 @asynccontextmanager
@@ -101,11 +108,15 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Home page (index)
 @app.get('/')
-async def homepage(request: Request):
+async def homepage(request: Request,):
     user = request.session.get('user')
     context = {
         "request": request,
-        "status": "it'    s",
+        "status": "it's bad",
         "user": user
     }
     return templates.TemplateResponse("index.html", context)
+
+@app.post("/pixel/{x}/{y}/")
+async def pixel(request: Request, x: int, y: int, pixel: Pixel):
+    set_pixel(x, y, pixel)

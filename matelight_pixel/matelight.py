@@ -24,6 +24,14 @@ def prepare_message(data, gamma=GAMMA):
     return message
 
 
+def blank_screen(rows=16, cols=40):
+    checksum = bytearray([0,0,0,0])
+    data_as_bytes = bytearray()
+    for _ in range(rows * cols):
+        data_as_bytes += bytearray([0, 0, 0])
+    message = data_as_bytes + checksum
+    return message
+
 def send_array(data, hostname, udp_port=1337):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(data, (hostname, udp_port))
