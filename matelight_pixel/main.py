@@ -1,7 +1,7 @@
 import asyncio
+import traceback
+import sys
 import json
-from typing import Annotated
-from datetime import datetime
 from contextlib import asynccontextmanager
 from starlette.config import Config
 from fastapi import Depends, FastAPI, Request, BackgroundTasks
@@ -13,10 +13,12 @@ from starlette.middleware.sessions import SessionMiddleware
 # from fastapi.security import OAuth2AuthorizationCodeBearer
 from starlette.responses import HTMLResponse, RedirectResponse
 
+from . import matelight
 
 class Settings(BaseSettings):
     matelight_host: str
     matelight_port: int
+    framerate: float
 
     # File '.env' will be read
     model_config = SettingsConfigDict(env_file=".env")
@@ -25,8 +27,34 @@ settings = Settings()
 templates = Jinja2Templates(directory="templates")
 
 
-PIXEL_WALL = []
+class Pixel(object):
 
+    def __init__(self, r=128, g=0, b=0, a=255):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a
+
+
+ROWS = 16
+COLS = 40 
+PIXEL_WALL = []
+for i in range(ROWS):   # create 640 empty pixels with R, G, B = 0
+    row = []
+    for j in range(COLS):
+        row.append(Pixel())
+    PIXEL_WALL.append(row)
+
+# TODO: Pixel wall should be persistet to disk so we don't loose the image on every reboots
+
+
+def set_pixel(x, y, pixel):
+    PIXEL_WALL[y][x] = pixel
+
+set_pixel(19, 7, Pixel(255,255,255))
+set_pixel(20, 7, Pixel(255,255,255))
+set_pixel(19, 8, Pixel(255,255,255))
+set_pixel(20, 8, Pixel(255,255,255))
 
 class MateLightRunner:
     def __init__(self):
@@ -35,9 +63,12 @@ class MateLightRunner:
     async def matelight_loop(self):
         global PIXEL_WALL
         try:
-            await asyncio.sleep(1.0)
+            message = matelight.prepare_message(PIXEL_WALL)
+            matelight.send_array(message, settings.matelight_host, settings.matelight_port)
+            await asyncio.sleep(1.0 / settings.framerate)
         except Exception as error:
-            await asyncio.sleep(2.0)
+            traceback.print_exc(file=sys.stdout)
+            await asyncio.sleep(1.0 / settings.framerate)
 
     async def run_main(self):
         self.started = True
@@ -47,6 +78,7 @@ class MateLightRunner:
                     
     async def stop(self):
         self.started = False
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
