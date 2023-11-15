@@ -20,5 +20,5 @@ During development:
 
 - Run `npm run dev` and leave it running, it will automatically scan your HTML files and only include CSS classes that are needed.
 - Run `poetry run uvicorn matelight_pixel.main:app --reload` to start the development version of the server.
-- Go to http://localhost:8000 to see the site.
+- Go to http://127.0.0.1:8000 to see the site.
 
