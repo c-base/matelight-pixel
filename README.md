@@ -7,14 +7,18 @@ Pixel wall for Mate-Light
 You need:
 
 - python 3.10+
-- poetry
+- poetry (or pip)
 - npm
 
 How to install:
 
 - `npm install` - installs tailwindcss
-- `poetry set virtualenvs.in-project`  - to make sure your venv will be stored inside as '.venv/' this project folder
-- `poetry install` - installs all python dependencies
+- install python dependencies with poetry:
+  - `poetry set virtualenvs.in-project`  - to make sure your venv will be stored inside as '.venv/' this project folder
+  - `poetry install` - installs all python dependencies
+- if you want to use pip:
+  - setup your virtual environment
+  - activate your virtual environment and run `pip install -r requirements.txt`
 
 During development:
 
