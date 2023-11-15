@@ -13,6 +13,7 @@ You need:
 How to install:
 
 - `npm install` - installs tailwindcss
+- `poetry set virtualenvs.in-project`  - to make sure your venv will be stored inside as '.venv/' this project folder
 - `poetry install` - installs all python dependencies
 
 During development:
