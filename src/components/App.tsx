@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "../../static/css/styles.css";
 
+const DEFAULT_COLOR = "#00FF00";
+
 interface Pixel {
   r: Number;
   g: Number;
@@ -25,11 +27,26 @@ function hexToRgb(hex: string): Pixel {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16),
       }
-    : { r: 0, g: 0, b: 0 };
+    : {r: 0, g: 0, b : 0};
+}
+
+function RgbToHex(rgb: Pixel): string {
+  var aaaa =  "#"+rgb.r.toString(16).padStart(2,0)+rgb.g.toString(16).padStart(2,0)+rgb.b.toString(16).padStart(2,0)
+  return aaaa
 }
 
 export default function App() {
-  const [color, setColor] = useState<Pixel>({ r: 0, g: 0, b: 0 });
+  const [color, setColor] = useState<string>(DEFAULT_COLOR);
+  const [frameBuffer, setFrameBuffer] = useState(
+    Array.from({ length: 16 }, (value, index) => index).map((y) =>
+    Array.from({ length: 40 }, (value, index) => index).map((x) => ({r: 0, g: 0, b:0}))
+  );
+  setTimeout(()=>{
+    fetch("/framebuffer/")
+    .then((buffer) => buffer.json())
+    .then(buffer=>{console.log(buffer);return buffer})
+    .then((buffer) => setFrameBuffer(buffer))
+  },1000)
 
   return (
     <>
@@ -39,7 +56,7 @@ export default function App() {
         <input
           id="colorPicker"
           type="color"
-          onChange={(e) => setColor(hexToRgb(e.target.value))}
+          onChange={(e) => setColor(e.target.value)}
         />
       </div>
       <div id="pixelTileContainer">
@@ -47,8 +64,9 @@ export default function App() {
           Array.from({ length: 40 }, (value, index) => index).map((x) => (
             <div
               key={x + "," + y}
-              onClick={() => sendPixel(x, y, color)}
+              onClick={() => sendPixel(x, y, hexToRgb(color))}
               className="pixelTile"
+              style={{backgroundColor:RgbToHex(frameBuffer[y][x])}}
             ></div>
           ))
         )}

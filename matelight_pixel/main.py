@@ -107,6 +107,9 @@ app.add_middleware(SessionMiddleware, secret_key="secret-string")
 async def pixel(request: Request, x: int, y: int, pixel: Pixel):
     set_pixel(x, y, pixel)
 
+@app.get("/framebuffer/")
+async def framebuffer(request: Request):
+    return PIXEL_WALL
     
 # Static files
 app.mount("/", StaticFiles(directory="build", html=True), name="static")
