@@ -24,12 +24,14 @@ div.colorPicker {
 
 #pixelTileContainer {
   display: grid;
-  grid-template-columns: repeat(40, auto);
-  gap: 1rem;
+  grid-template-columns: repeat(40, 1.5rem);
+  gap: 2px
 }
 
 .pixelTile {
   height: 1rem;
   width: 1rem;
   background-color: blue;
+  border: 1px solid black;
+  border-radius: 50%;
 }
