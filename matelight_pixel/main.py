@@ -24,7 +24,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()
-templates = Jinja2Templates(directory="templates")
+templates = StaticFiles(directory="build")
+templates = Jinja2Templates(directory="build")
 
 
 class Pixel(BaseModel):
@@ -102,21 +103,10 @@ app = FastAPI(lifespan=lifespan)
 # Allow sessions    
 app.add_middleware(SessionMiddleware, secret_key="secret-string")
 
-# Static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
-# Home page (index)
-@app.get('/')
-async def homepage(request: Request,):
-    user = request.session.get('user')
-    context = {
-        "request": request,
-        "status": "it's bad",
-        "user": user
-    }
-    return templates.TemplateResponse("index.html", context)
-
 @app.post("/pixel/{x}/{y}/")
 async def pixel(request: Request, x: int, y: int, pixel: Pixel):
     set_pixel(x, y, pixel)
+
+    
+# Static files
+app.mount("/", StaticFiles(directory="build", html=True), name="static")

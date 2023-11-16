@@ -9,12 +9,6 @@ h1 {
   text-decoration-line: underline;
 }
 
-#matelightContainer {
-  display: grid;
-  grid-template-columns: repeat(20, auto);
-  gap: 1rem;
-}
-
 div.colorPicker {
   display: flex;
   justify-content: center;
@@ -26,4 +20,16 @@ div.colorPicker {
   input {
     padding: 0.3rem;
   }
+}
+
+#pixelTileContainer {
+  display: grid;
+  grid-template-columns: repeat(40, auto);
+  gap: 1rem;
+}
+
+.pixelTile {
+  height: 1rem;
+  width: 1rem;
+  background-color: blue;
 }
