@@ -8,14 +8,18 @@ interface Pixel {
   g: Number;
   b: Number;
 }
+interface Coordinates {
+  x: Number;
+  y: Number;
+}
 
-function sendPixel(x: Number, y: Number, pixel: Pixel) {
-  fetch(`/pixel/${x}/${y}/`, {
+function sendPixel(coordinates: Coordinates, pixel: Pixel) {
+  fetch(`/pixel/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(pixel),
+    body: JSON.stringify({ coordinates, pixel }),
   });
 }
 
@@ -66,6 +70,12 @@ export default function App() {
           id="colorPicker"
           type="color"
           onChange={(e) => setColor(e.target.value)}
+          value={color}
+        />
+        <input
+          type="button"
+          value={"session"}
+          onClick={() => fetch("/getToken/")}
         />
       </div>
       <div id="pixelTileContainer">
@@ -73,7 +83,7 @@ export default function App() {
           Array.from({ length: 40 }, (value, index) => index).map((x) => (
             <div
               key={x + "," + y}
-              onClick={() => sendPixel(x, y, hexToRgb(color))}
+              onClick={() => sendPixel({ x, y }, hexToRgb(color))}
               className="pixelTile"
               style={{ backgroundColor: RgbToHex(frameBuffer[y][x]) }}
             ></div>

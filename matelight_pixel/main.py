@@ -41,6 +41,9 @@ class Pixel(BaseModel):
         self.b = b
         self.a = a
 
+class Coordinates(BaseModel):
+    x: int = 0
+    y: int = 0
 
 ROWS = 16
 COLS = 40 
@@ -52,7 +55,6 @@ for i in range(ROWS):   # create 640 empty pixels with R, G, B = 0
     PIXEL_WALL.append(row)
 
 # TODO: Pixel wall should be persistet to disk so we don't loose the image on every reboots
-
 
 def set_pixel(x, y, pixel):
     PIXEL_WALL[y][x] = pixel
@@ -101,15 +103,39 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)        
 
 # Allow sessions    
-app.add_middleware(SessionMiddleware, secret_key="secret-string")
+app.add_middleware(SessionMiddleware, secret_key="secret_key")
+@app.middleware("http")
+async def some_middleware(request: Request, call_next):
+    response = await call_next(request)
+    session = request.cookies.get('session')
+    print(session)
+    # if session:
+    #     response.set_cookie(key='session', value=request.cookies.get('session'), httponly=True)
+    return response
 
-@app.post("/pixel/{x}/{y}/")
-async def pixel(request: Request, x: int, y: int, pixel: Pixel):
-    set_pixel(x, y, pixel)
+@app.post("/pixel/")
+async def pixel(request: Request, coordinates: Coordinates, pixel: Pixel):
+    if(request.session):
+        lastPixelSet = request.session["lastPixelSet"]
+        print(lastPixelSet)
+        print(time.time() - lastPixelSet < 300)
+        if (lastPixelSet and time.time() - lastPixelSet < 300) :
+            return 'Wait 5 mins...'
+        request.session["lastPixelSet"] = time.time()
+        set_pixel(coordinates.x, coordinates.y, pixel)
+        return 'OK'
+    return 'Get a session'  # TODO: Here call captcha, which will set the session.
 
 @app.get("/framebuffer/")
 async def framebuffer(request: Request):
     return PIXEL_WALL
-    
+
+# TODO: Delete this, should happen on first attempt to set a pixel.
+@app.get("/getToken/")
+async def getToken(request: Request):
+    request.session["lastPixelSet"] = 1
+    print(request.cookies.get('session'))
+    return 'OK'
+
 # Static files
 app.mount("/", StaticFiles(directory="build", html=True), name="static")
