@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../../static/css/styles.css";
+import headerImage from "../../static/img/header.png";
 
 const DEFAULT_COLOR = "#00FF00";
 
@@ -64,6 +65,7 @@ export default function App() {
   return (
     <>
       <h1>Mate-Light Pixel Wall</h1>
+      <img src={headerImage} />
       <div className="colorPicker">
         <span>Select color:</span>
         <input
@@ -78,17 +80,19 @@ export default function App() {
           onClick={() => fetch("/getToken/")}
         />
       </div>
-      <div id="pixelTileContainer">
-        {Array.from({ length: 16 }, (value, index) => index).map((y) =>
-          Array.from({ length: 40 }, (value, index) => index).map((x) => (
-            <div
-              key={x + "," + y}
-              onClick={() => sendPixel({ x, y }, hexToRgb(color))}
-              className="pixelTile"
-              style={{ backgroundColor: RgbToHex(frameBuffer[y][x]) }}
-            ></div>
-          ))
-        )}
+      <div id="pixelTileContainerWrapper">
+        <div id="pixelTileContainer">
+          {Array.from({ length: 16 }, (value, index) => index).map((y) =>
+            Array.from({ length: 40 }, (value, index) => index).map((x) => (
+              <div
+                key={x + "," + y}
+                onClick={() => sendPixel({ x, y }, hexToRgb(color))}
+                className="pixelTile"
+                style={{ backgroundColor: RgbToHex(frameBuffer[y][x]) }}
+              ></div>
+            ))
+          )}
+        </div>
       </div>
     </>
   );
