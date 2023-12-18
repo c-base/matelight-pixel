@@ -1,3 +1,17 @@
+@font-face {
+  font-family: gabriella;
+  src: url("/static/fonts/Gabriella/GabriellaHeavy.otf") format("OpenType");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: vcr;
+  src: local("/static/fonts/VCR-OCD-Faux/VCRODCFaux.ttf") format("ttf");
+  /* font-weight: 900;
+  font-style: normal; */
+}
+
 html {
   font-weight: 700;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -14,7 +28,9 @@ body {
 }
 
 h1 {
-  text-decoration-line: underline;
+  font-family: gabriella, sans-serif;
+  font-weight: 900;
+  font-style: normal;
 }
 
 div.colorPicker {
@@ -22,6 +38,7 @@ div.colorPicker {
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  font-family: vcr;
   font-weight: bold;
   font-size: large;
   margin: 2rem 1rem;

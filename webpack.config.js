@@ -19,12 +19,16 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(png|svg|jpg|gif|woff|woff2|eot|ttf|otf)$/,
+        test: /\.(png|svg|jpg|gif)$/,
         use: ["file-loader"],
       },
       {
         test: /\.(scss|css)$/,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        use: "url-loader?limit=100000",
       },
     ],
   },

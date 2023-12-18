@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../../static/css/styles.css";
 import headerImage from "../../static/img/header.png";
+import "../../static/fonts/Gabriella/GabriellaHeavy.otf";
 
 const DEFAULT_COLOR = "#00FF00";
 
