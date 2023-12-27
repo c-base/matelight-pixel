@@ -1,15 +1,6 @@
 @font-face {
-  font-family: gabriella;
-  src: url("/static/fonts/Gabriella/GabriellaHeavy.otf") format("OpenType");
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: vcr;
-  src: local("/static/fonts/VCR-OCD-Faux/VCRODCFaux.ttf") format("ttf");
-  /* font-weight: 900;
-  font-style: normal; */
+  font-family: mona;
+  src: url("/static/fonts/Mona Sans/Mona-Sans.woff2") format("woff2");
 }
 
 html {
@@ -28,9 +19,7 @@ body {
 }
 
 h1 {
-  font-family: gabriella, sans-serif;
-  font-weight: 900;
-  font-style: normal;
+  font-family: mona, sans-serif;
 }
 
 div.colorPicker {
@@ -57,10 +46,24 @@ div.colorPicker {
   grid-template-columns: repeat(40, 1rem);
   column-gap: 0.5rem;
   row-gap: 0.25rem;
+  overflow-x: scroll;
 }
 
 .pixelTile {
   height: 1rem;
   width: 1rem;
   border-radius: 50%;
+}
+
+#header {
+  display: none;
+}
+
+@media only screen and (min-width: 600px) {
+  #header {
+    display: inline;
+  }
+  #header-sm {
+    display: none;
+  }
 }

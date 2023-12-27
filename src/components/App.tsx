@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "../../static/css/styles.css";
 import headerImage from "../../static/img/header.png";
-import "../../static/fonts/Gabriella/GabriellaHeavy.otf";
+import headerImageSM from "../../static/img/header-sm.png";
+import "../../static/fonts/Mona Sans/Mona-Sans.woff2";
 
 const DEFAULT_COLOR = "#00FF00";
 
@@ -66,7 +67,8 @@ export default function App() {
   return (
     <>
       <h1>Mate-Light Pixel Wall</h1>
-      <img src={headerImage} />
+      <img id={"header"} src={headerImage} />
+      <img id={"header-sm"} src={headerImageSM} />
       <div className="colorPicker">
         <span>Select color:</span>
         <input
@@ -75,11 +77,11 @@ export default function App() {
           onChange={(e) => setColor(e.target.value)}
           value={color}
         />
-        <input
+      {/**  <input
           type="button"
           value={"session"}
           onClick={() => fetch("/getToken/")}
-        />
+        /> **/}
       </div>
       <div id="pixelTileContainerWrapper">
         <div id="pixelTileContainer">

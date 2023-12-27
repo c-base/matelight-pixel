@@ -28,7 +28,7 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        use: "url-loader?limit=100000",
+        use: "url-loader?limit=10000000",
       },
     ],
   },

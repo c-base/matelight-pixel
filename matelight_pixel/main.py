@@ -1,7 +1,10 @@
 import asyncio
+from captcha.image import ImageCaptcha
 import traceback
 import sys
 import json
+import string
+import random
 from contextlib import asynccontextmanager
 # sfrom starlette.config import Config
 from fastapi import Depends, FastAPI, Request, BackgroundTasks
@@ -101,6 +104,7 @@ async def lifespan(app: FastAPI):
     runner.stop()
 
 app = FastAPI(lifespan=lifespan)        
+image = ImageCaptcha()
 
 # Allow sessions    
 app.add_middleware(SessionMiddleware, secret_key="secret_key")
@@ -109,8 +113,6 @@ async def some_middleware(request: Request, call_next):
     response = await call_next(request)
     session = request.cookies.get('session')
     print(session)
-    # if session:
-    #     response.set_cookie(key='session', value=request.cookies.get('session'), httponly=True)
     return response
 
 @app.post("/pixel/")
@@ -118,8 +120,8 @@ async def pixel(request: Request, coordinates: Coordinates, pixel: Pixel):
     if(request.session):
         lastPixelSet = request.session["lastPixelSet"]
         print(lastPixelSet)
-        print(time.time() - lastPixelSet < 300)
-        if (lastPixelSet and time.time() - lastPixelSet < 300) :
+        print(time.time() - lastPixelSet < 5)
+        if (lastPixelSet and time.time() - lastPixelSet < 5) :
             return 'Wait 5 mins...'
         request.session["lastPixelSet"] = time.time()
         set_pixel(coordinates.x, coordinates.y, pixel)
@@ -131,11 +133,25 @@ async def framebuffer(request: Request):
     return PIXEL_WALL
 
 # TODO: Delete this, should happen on first attempt to set a pixel.
-@app.get("/getToken/")
+@app.get("/getCaptcha/")
 async def getToken(request: Request):
+    chars = string.ascii_letters + string.digits
+    captchaSecret = ''.join(random.choice(chars) for i in range(4))
+    filename = ''.join(random.choice(chars) for i in range(4))
+
+    data = image.generate(captchaSecret)
+    image.write(captchaSecret, 'build/' + filename + '.png')
+    request.session["requestingCaptcha"] = captchaSecret
     request.session["lastPixelSet"] = 1
-    print(request.cookies.get('session'))
-    return 'OK'
+    return filename + '.png'
+
+@app.get("/verifyCaptcha/")
+async def getToken(request: Request, submittedCaptcha: str):
+    if(request.session):
+        print('shoud be: ' + request.session["requestingCaptcha"])
+        print('is:       ' + submittedCaptcha)
+        if(request.session["requestingCaptcha"] == submittedCaptcha):
+            print('OKAYYYY ----------')
 
 # Static files
 app.mount("/", StaticFiles(directory="build", html=True), name="static")
